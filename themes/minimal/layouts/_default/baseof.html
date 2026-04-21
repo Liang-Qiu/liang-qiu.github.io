@@ -4,24 +4,44 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{{ .Site.Params.subtitle | default .Site.Title }}">
-  <title>{{ .Site.Title }}</title>
+  <meta name="color-scheme" content="light dark">
+  <title>{{ if not .IsHome }}{{ .Title }} — {{ end }}{{ .Site.Title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..700;1,400..700&family=Source+Serif+4:opsz,wght@8..60,400..600&display=swap">
   <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+  <script>
+    (function () {
+      var s = localStorage.getItem('lq-theme');
+      if (s === 'dark') document.documentElement.classList.add('dark');
+      else if (s === 'light') document.documentElement.classList.add('light');
+    })();
+  </script>
 </head>
 <body>
-  <nav>
-    <a href="#about">About Me</a>
-    <a href="#publications">Selected Publications</a>
-    <a href="#contact">Contact</a>
-  </nav>
-  
-  <main class="content">
+  <div class="wrap">
     {{ block "main" . }}{{ end }}
-  </main>
-  
-  <footer>
-    &copy; {{ now.Year }} {{ .Site.Title }}
-    &middot;
-    <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND</a>
-  </footer>
+
+    <footer>
+      <span>&copy; {{ now.Year }} {{ .Site.Title }} &middot; Designed by <a href="https://claude.com/claude-code">Claude</a></span>
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var btn = document.querySelector('.theme-toggle');
+      if (!btn) return;
+      var root = document.documentElement;
+      var KEY = 'lq-theme';
+      btn.addEventListener('click', function () {
+        var prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = root.classList.contains('dark') || (!root.classList.contains('light') && prefersDark);
+        root.classList.remove('dark', 'light');
+        if (isDark) { root.classList.add('light'); localStorage.setItem(KEY, 'light'); }
+        else        { root.classList.add('dark');  localStorage.setItem(KEY, 'dark');  }
+      });
+    })();
+  </script>
 </body>
 </html>
